@@ -1,24 +1,29 @@
 from flask import Blueprint, request, jsonify
-import openai
+from openai import OpenAI
+
 import os
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 bp = Blueprint('routes', __name__)
 
 # Set OpenAI API key
-openai.api_key = os.getenv('OPENAI_API_KEY')
 
 @bp.route('/summarize', methods=['POST'])
 def summarize():
     data = request.get_json()
     text = data.get('text')
-    # Use the OpenAI API for text summarization
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=f"Summarize this text: {text}",
-        max_tokens=50
-    )
-    summary = response.choices[0].text.strip()
-    return jsonify({'summary': summary})
-@bp.route('/', methods=['GET'])
-def index():
-    return 'Hello, World!'
+    if not text:
+        return jsonify({'error': 'No text provided'}), 400
+
+    try:
+        # Use the OpenAI API for text summarization
+        response = client.chat.completions.create(model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": f"Summarize this text: {text}"}
+        ],
+        max_tokens=150)
+        summary = response.choices[0].message.content.strip()
+        return jsonify({'summary': summary})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
