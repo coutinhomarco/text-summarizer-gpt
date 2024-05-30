@@ -12,7 +12,6 @@ def summarize():
     text = data.get('text')
     if not text:
         return jsonify({'error': 'No text provided'}), 400
-
     try:
         # Use the OpenAI API for text summarization
         response = client.chat.completions.create(
@@ -21,9 +20,9 @@ def summarize():
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": f"Summarize this text: {text}"}
             ],
-            max_tokens=150
+            max_tokens=350
         )
-        summary = response['choices'][0]['message']['content'].strip()
+        summary = response.choices[0].message.content.strip()
         return jsonify({'summary': summary})
     except Exception as e:
         print(f"Exception: {e}")  # Add print statement to log the exception
