@@ -1,73 +1,133 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Nest API Project
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a Nest API that interacts with a Flask microservice for text summarization and uses PostgreSQL as the database, managed through Prisma ORM. The project uses Docker Compose for easy setup and deployment.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Table of Contents
 
-## Description
+1. [Prerequisites](#prerequisites)
+2. [Installation](#installation)
+3. [Configuration](#configuration)
+4. [Running the Application](#running-the-application)
+5. [API Endpoints](#api-endpoints)
+6. [Database Schema](#database-schema)
+## Prerequisites
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Docker and Docker Compose
+- Node.js and npm
+- Prisma CLI (`npm install -g prisma`)
 
 ## Installation
 
-```bash
-$ npm install
+1. **Clone the repository:**
+
+   ```bash
+   git clone git@github.com:coutinhomarco/text-summarizer-gpt.git
+   cd server
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   cd server
+   npm install
+   ```
+
+3. **Set up environment variables:**
+
+   Create a `.env` file in the root directory and fill in the necessary environment variables. You can use the provided `.env.example` as a reference.
+
+4. **Generate Prisma Client:**
+
+   ```bash
+   npx prisma generate
+   ```
+
+## Configuration
+
+Make sure to configure the following environment variables in your `.env` file:
+
+- `DATABASE_URL` - PostgreSQL connection string
+- `FLASK_SERVICE_URL` - URL of the Flask microservice
+- `JWT_SECRET` - Secret key for JWT authentication
+
+Example `.env`:
+
+```env
+PORT=4000
+DATABASE_URL=postgresql://user:password@localhost:5432/mydb
+FLASK_SERVICE_URL=http://flask-service:5000
+JWT_SECRET=your_jwt_secret
 ```
 
-## Running the app
+## Running the Application
 
-```bash
-# development
-$ npm run start
+1. **Start the Docker containers:**
 
-# watch mode
-$ npm run start:dev
+   ```bash
+   docker-compose up
+   ```
 
-# production mode
-$ npm run start:prod
-```
+2. **Apply Prisma Migrations:**
 
-## Test
+   ```bash
+   npx prisma migrate deploy
+   ```
 
-```bash
-# unit tests
-$ npm run test
+3. **Start the Nest API:**
 
-# e2e tests
-$ npm run test:e2e
+   ```bash
+   npm run start:dev
+   ```
 
-# test coverage
-$ npm run test:cov
-```
+The Nest API will be running on `http://localhost:3000`.
 
-## Support
+## Request flow
+![Request Flow](../docs/workflow.png)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## API Endpoints
 
-## Stay in touch
+### Authentication
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- **POST /auth/login** - Authenticate a user
+- **POST /auth/register** - Register a new user
 
-## License
+### Text Summarization
 
-Nest is [MIT licensed](LICENSE).
+- **POST /summarize** - Summarize text using the Flask microservice
+
+### Message Log
+
+- **GET /summarize/logs** - Get all message logs for that user
+
+### User Management
+
+- **GET /users** - Get all users
+- **GET /users/:id** - Get a user by ID
+- **POST /users** - Create a new user
+- **PUT /users/:id** - Update a user by ID
+- **DELETE /users/:id** - Delete a user by ID
+
+
+
+## Database Schema
+
+The database schema includes two main tables: `User` and `MessageLog`.
+
+### User Table
+
+| Column      | Type    | Description         |
+|-------------|---------|---------------------|
+| id          | Integer | Primary key         |
+| username    | String  | Unique, not null    |
+| password    | String  | Hashed, not null    |
+| logs        | Array   | Timestamp           |
+
+### MessageLog Table
+
+| Column      | Type    | Description         |
+|-------------|---------|---------------------|
+| id          | Integer | Primary key         |
+| userId      | Integer | Foreign key (User)  |
+| text        | String  | The message content |
+| summary     | String  | The resumed text    |
+| createdAt   | Date    | Timestamp           |
