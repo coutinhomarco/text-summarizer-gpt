@@ -14,4 +14,12 @@ export class UsersService {
       data: user,
     });
   }
+
+  async delete(username: string) {
+    return this.prisma.user.delete({ where: { username } });
+  }
+
+  async findAll() {
+    return this.prisma.user.findMany();
+  }
 }
