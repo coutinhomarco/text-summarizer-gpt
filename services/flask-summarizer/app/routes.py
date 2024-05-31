@@ -27,3 +27,6 @@ def summarize():
     except Exception as e:
         print(f"Exception: {e}")  # Add print statement to log the exception
         return jsonify({'error': str(e)}), 500
+@bp.route('/health', methods=['GET'])
+def health():
+    return jsonify({'status': 'ok'})
