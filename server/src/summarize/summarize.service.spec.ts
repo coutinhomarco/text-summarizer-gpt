@@ -4,7 +4,7 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { HttpModule } from '@nestjs/axios';
-import { lastValueFrom, of } from 'rxjs';
+import { of } from 'rxjs';
 import axios, { AxiosResponse, AxiosRequestConfig, AxiosHeaders } from 'axios';
 
 describe('SummarizeService', () => {

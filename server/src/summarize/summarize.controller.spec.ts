@@ -1,13 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SummarizeController } from './summarize.controller';
 import { SummarizeService } from './summarize.service';
-import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { HttpModule } from '@nestjs/axios';
-import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
 import axios from 'axios';
-import { ExecutionContext } from '@nestjs/common';
 
 describe('SummarizeController', () => {
   let controller: SummarizeController;
