@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { useAuth } from '../../context/authContext';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -19,9 +21,11 @@ const Login = () => {
     });
     const data = await response.json();
     if (response.ok) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('loginTimestamp', Date.now().toString());
-      router.push('/');
+      login(data.token);
+      router.push({
+        pathname: '/',
+        query: { notification: 'Login successful!' }
+      });
     } else {
       setError(data.message);
     }

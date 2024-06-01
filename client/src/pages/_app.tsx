@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import '../layouts/layout.css';
 import type { AppProps } from 'next/app';
+import { AuthProvider } from '@/context/authContext';
 import Layout from '../layouts/layout';
 import { useEffect } from 'react';
 
@@ -10,9 +11,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <AuthProvider>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </AuthProvider>
   );
 }
 

@@ -1,7 +1,8 @@
 import dynamic from 'next/dynamic';
 import { useState, ChangeEvent, FormEvent } from 'react';
 import useAuth from '../hooks/useAuth';
-
+import { useRouter } from 'next/router';
+import Notification from '../components/notification';
 const Form = dynamic(() => import('../components/chatbot/form'), { ssr: false });
 
 interface Message {
@@ -14,7 +15,8 @@ const Home = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-
+  const router = useRouter();
+  const { notification } = router.query;
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
   };
@@ -55,8 +57,9 @@ const Home = () => {
   }
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+    <div className="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 max-h-header">
       <main className="container mx-auto p-4">
+        {notification && <Notification message={notification as string} />}
         <Form
           messages={messages}
           input={input}
