@@ -1,5 +1,8 @@
+import dynamic from 'next/dynamic';
 import { useState, ChangeEvent, FormEvent } from 'react';
-import Chatbot from '../components/chatbot/form';
+
+const Form = dynamic(() => import('../components/chatbot/form'), { ssr: false });
+
 interface Message {
   role: 'user' | 'bot';
   content: string;
@@ -43,8 +46,14 @@ const Home = () => {
   };
 
   return (
-    <div className="bg-gray-100 text-gray-900 min-h-footer">
-      <Chatbot input={input} sendMessage={sendMessage} handleInputChange={handleInputChange} />
+    <div className="bg-gray-100 text-gray-900 min-h-screen">
+      <main className="container mx-auto p-4">
+        <Form 
+          input={input}
+          handleInputChange={handleInputChange}
+          sendMessage={sendMessage}
+        />
+      </main>
     </div>
   );
 };
