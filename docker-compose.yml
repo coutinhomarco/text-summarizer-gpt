@@ -12,6 +12,7 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydatabase
+      - FLASK_SERVICE_URL=http://flask_service:5000/summarize
     depends_on:
       - postgres
       - flask_service
@@ -42,6 +43,18 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  prisma_migrate:
+    image: node:18
+    container_name: prisma_migrate
+    working_dir: /app
+    volumes:
+      - ./server:/app
+    environment:
+      - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydatabase
+    depends_on:
+      - postgres
+    command: ["npx", "prisma", "migrate", "deploy"]
 
 volumes:
   postgres_data:

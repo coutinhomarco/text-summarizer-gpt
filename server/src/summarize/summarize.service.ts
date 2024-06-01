@@ -18,10 +18,18 @@ export class SummarizeService {
 
   async summarize(userId: number, text: string): Promise<any> {
     const response = await lastValueFrom(
-      this.httpService.post(this.flaskServiceUrl, { text }),
+      this.httpService.post(
+        this.flaskServiceUrl,
+        { text },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.configService.get<string>('FLASK_SERVICE_TOKEN')}`,
+          },
+        },
+      ),
     );
     const summary = response.data.summary;
-
     await this.prisma.messageLog.create({
       data: {
         userId,

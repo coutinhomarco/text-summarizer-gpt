@@ -1,13 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import cookie from 'cookie';
 
 const NEST_API_URL = process.env.NEXT_PUBLIC_NEST_API_URL;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { text } = req.body;
-    const cookies = cookie.parse(req.headers.cookie || '');
-    const token = cookies.token;
+    const { message: text } = req.body;
+    const token = req.headers.authorization?.replace('Bearer ', '');
 
     if (!token) {
       return res.status(401).json({ message: 'Unauthorized' });
