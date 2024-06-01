@@ -9,9 +9,7 @@ const Header = () => {
         <div className="flex items-center">
           <img src="https://via.placeholder.com/40" alt="Logo" className="mr-2" />
           {
-            !isLogged ? (
-              <CustomButton>Login</CustomButton>
-            ) : (
+            isLogged && (
               <CustomButton>Logout</CustomButton>
             )
           }

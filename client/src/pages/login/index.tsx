@@ -21,8 +21,6 @@ const Login = () => {
     const data = await response.json();
 
     if (response.ok) {
-      // Store the JWT token (consider using HttpOnly cookies for better security)
-      localStorage.setItem('token', data.token);
       router.push('/');
     } else {
       setError(data.message);

@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic';
 import { useState, ChangeEvent, FormEvent } from 'react';
+import useAuth from '../hooks/useAuth';
 
 const Form = dynamic(() => import('../components/chatbot/form'), { ssr: false });
 
@@ -9,6 +10,7 @@ interface Message {
 }
 
 const Home = () => {
+  const isAuthenticated = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -45,10 +47,14 @@ const Home = () => {
     }
   };
 
+  if (!isAuthenticated) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
       <main className="container mx-auto p-4">
-        <Form 
+        <Form
           input={input}
           handleInputChange={handleInputChange}
           sendMessage={sendMessage}
