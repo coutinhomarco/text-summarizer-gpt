@@ -40,9 +40,9 @@ const Home = () => {
         body: JSON.stringify({ message: input })
       });
 
-      const data = await response.json();
-      const botMessage: Message = { role: 'bot', content: data.reply };
-      setMessages(prevMessages => [...prevMessages, userMessage, botMessage]);
+      const data = await response.json();      
+      const botMessage: Message = { role: 'bot', content: data.summary };
+      setMessages(prevMessages => [...prevMessages, botMessage]);
     } catch (error) {
       console.error('Error fetching bot response:', error);
     } finally {
@@ -58,9 +58,11 @@ const Home = () => {
     <div className="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
       <main className="container mx-auto p-4">
         <Form
+          messages={messages}
           input={input}
           handleInputChange={handleInputChange}
           sendMessage={sendMessage}
+          loading={loading}
         />
       </main>
     </div>

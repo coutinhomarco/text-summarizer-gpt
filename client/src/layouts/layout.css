@@ -1,4 +1,19 @@
 .max-h-header {
     max-height: calc(100vh - 150px);
-    overflow-y: hidden;
+    /* overflow-y: hidden; */
 }
+
+/* Add this CSS to your global styles or in the relevant component styles */
+.bg-blue-200 {
+    background-color: #bfdbfe;
+  }
+  .text-blue-900 {
+    color: #1e3a8a;
+  }
+  .bg-green-200 {
+    background-color: #bbf7d0;
+  }
+  .text-green-900 {
+    color: #065f46;
+  }
+  
