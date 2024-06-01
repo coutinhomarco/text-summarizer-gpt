@@ -1,6 +1,6 @@
 # Text Summarizer Project
 
-This project consists of a NestJS API that interacts with a Flask microservice for text summarization and uses PostgreSQL as the database, managed through Prisma ORM. The project is set up and managed using Docker Compose for easy deployment.
+This project consists of a NestJS API that interacts with a Flask microservice for text summarization and uses PostgreSQL as the database, managed through Prisma ORM. The project is set up and managed using Docker Compose for easy deployment. Additionally, it includes a front-end application built with Next.js, providing a user interface for text summarization.
 
 ## Table of Contents
 
@@ -11,20 +11,21 @@ This project consists of a NestJS API that interacts with a Flask microservice f
 5. [API Endpoints](#api-endpoints)
 6. [Database Schema](#database-schema)
 7. [Flask Summarization Service](#flask-summarization-service)
-8. [Running Tests](#running-tests)
-9. [Development](#development)
+8. [Front End](#front-end)
+9. [Running Tests](#running-tests)
+10. [Development](#development)
 
 ## Request flow
 
 ![Request Flow](docs/workflow.png)
-
 
 ## Prerequisites
 
 - Docker and Docker Compose
 - Node.js and npm
 - Prisma CLI (`npm install -g prisma`)
-
+- Nest CLI (`npm install -g @nestjs/cli`)
+- PostgreSQL
 
 ## Installation
 
@@ -35,7 +36,7 @@ This project consists of a NestJS API that interacts with a Flask microservice f
    cd text-summarizer-gpt
    ```
 
-2. **Install dependencies:**
+2. **Install dependencies (only needed if not using Docker):**
 
    ```bash
    cd server
@@ -46,7 +47,7 @@ This project consists of a NestJS API that interacts with a Flask microservice f
 
    Create a `.env` file in the root directory and fill in the necessary environment variables. You can use the provided `.env.example` as a reference.
 
-4. **Generate Prisma Client:**
+4. **Generate Prisma Client (only needed if not using Docker):**
 
    ```bash
    npx prisma generate
@@ -130,19 +131,19 @@ The database schema includes two main tables: `User` and `MessageLog`.
 | summary     | String  | The summarized text |
 | createdAt   | Date    | Timestamp           |
 
-# Flask Summarization Service
+## Flask Summarization Service
 
-## Overview
+### Overview
 
 This Flask service provides an API endpoint to summarize text using the OpenAI GPT-3.5 Turbo model. The service is designed to be a microservice within a larger application, where it receives requests from a NestJS backend API. The entire application is orchestrated using Docker Compose for ease of deployment and management.
 
-## Features
+### Features
 
 - **Text Summarization**: Summarizes provided text using the OpenAI GPT-3.5 Turbo model.
 - **Error Handling**: Handles cases where no text is provided or when an exception occurs during summarization.
 - **Environment Variables**: Uses environment variables to manage sensitive information like the OpenAI API key.
 
-## Directory Structure
+### Directory Structure
 
 ```
 flask-summarizer/
@@ -161,14 +162,14 @@ flask-summarizer/
 ├── README.md
 ```
 
-## Setup Instructions
+### Setup Instructions
 
-### Prerequisites
+#### Prerequisites
 
 - Docker and Docker Compose
 - OpenAI API key
 
-### Installation
+#### Installation
 
 1. **Set Up Environment Variables**:
    Create a `.env` file in the `flask-summarizer` directory with the following content:
@@ -189,38 +190,125 @@ To run the unit tests for the Flask service, use the following command:
 docker-compose run --rm flask-service python -m unittest discover -s tests
 ```
 
-## API Endpoints
+## Front End
 
-### POST /summarize
+### Overview
 
-**Description**: Summarizes the provided text using the OpenAI GPT-3.5 Turbo model.
+The front-end application is built with Next.js and provides a user interface for interacting with the NestJS API for text summarization. It includes user authentication, text summarization, and viewing summarization logs.
 
-**Request**:
-- Headers: `Content-Type: application/json`
-- Body:
-  ```json
-  {
-    "text": "Your text to summarize."
-  }
-  ```
+### Directory Structure
 
-**Response**:
-- Success (200):
-  ```json
-  {
-    "summary": "The summarized text."
-  }
-  ```
-- Error (400 or 500):
-  ```json
-  {
-    "error": "Error message"
-  }
-  ```
+```
+client/
+├── components/
+│   ├── button/
+│   ├── card/
+│   ├── chatbot/
+│   ├── header/
+│   ├── input/
+│   ├── messagesList/
+│   ├── notification/
+├── context/
+│   ├── authContext.tsx
+│   ├── useAuth.ts
+├── layouts/
+│   ├── layout.css
+│   ├── layout.tsx
+├── pages/
+│   ├── api/
+│   ├── auth/
+│   ├── summarize/
+│   ├── users/
+│   ├── login/
+│   ├── register/
+│   ├── _app.tsx
+│   ├── index.tsx
+├── styles/
+│   ├── globals.css
+├── .env
+├── .env.local
+├── .env.dev
+├── .eslintrc.json
+├── .gitignore
+├── favicon.ico
+├── next-env.d.ts
+├── next.config.js
+├── package.json
+```
+
+### Installation
+
+1. **Navigate to the front-end directory:**
+
+   ```bash
+   cd client
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables:**
+
+   Create a `.env.local` file in the `client` directory and fill in the necessary environment variables. You can use the provided `.env.example` as a reference.
+
+### Configuration
+
+Make sure to configure the following environment variables in your `.env.local` file:
+
+- `NEXT_PUBLIC_API_URL` - URL of the NestJS API
+
+Example `.env.local`:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:4000
+```
+
+### Running the Application
+
+1. **Start the development server:**
+
+   ```bash
+   npm run dev
+   ```
+
+The front-end application will be running on `http://localhost:3000`.
 
 ## Development
 
-### Local Development
+### Local Development for Backend (NestJS)
+
+1. **Navigate to the NestJS server directory**:
+   ```bash
+   cd server
+   ```
+
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Set up Environment Variables**:
+   Ensure that the `.env` file is correctly configured as mentioned in the Configuration section.
+
+4. **Run NestJS Application**:
+   ```bash
+   npm run start:dev
+   ```
+
+### Local Development for PostgreSQL
+
+1. **Ensure PostgreSQL is running**:
+   You can either run PostgreSQL locally or through Docker.
+
+2. **Run Prisma Migrations**:
+   ```bash
+   npx prisma migrate dev
+   ```
+
+### Local Development for Flask
 
 1. **Create and Activate a Virtual Environment**:
    ```bash
@@ -237,4 +325,26 @@ docker-compose run --rm flask-service python -m unittest discover -s tests
    ```bash
    export FLASK_APP=wsgi.py
    flask run
+   ```
+
+### Local Development for Front-End (Next.js)
+
+1. **Navigate to the front-end directory**:
+  
+
+ ```bash
+   cd client
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**:
+   Ensure that the `.env.local` file is correctly configured as mentioned in the Configuration section.
+
+4. **Run the Next.js Application**:
+   ```bash
+   npm run dev
    ```
