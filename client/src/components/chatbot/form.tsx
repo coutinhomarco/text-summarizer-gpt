@@ -3,6 +3,7 @@ import { ClipLoader } from 'react-spinners';
 import CustomInput from '../input/CustomInput';
 import CustomButton from '../button/CustomButton';
 import { CustomCard, CustomCardHeader, CustomCardBody } from '../card/index';
+import {MessageList} from '../messagesList/index';
 
 interface Props {
   input: string;
@@ -28,14 +29,7 @@ export default function Form(props: Props) {
       </CustomCard>
       <CustomCard>
         <div className="mb-4 max-h-96 overflow-y-auto">
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`mb-2 p-4 rounded shadow ${message.role === 'user' ? 'bg-blue-200 text-blue-900' : 'bg-green-200 text-green-900'}`}
-            >
-              <strong>{message.role === 'user' ? 'You' : 'Bot'}:</strong> {message.content}
-            </div>
-          ))}
+          <MessageList messages={messages} />
         </div>
         <CustomInput
           type="text"

@@ -13,10 +13,11 @@ const Header = () => {
           </Link>
         </div>
         <div className="flex items-center space-x-4">
-          <CustomButton>Github</CustomButton>
-          <Link href="/register">
-            <span className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-300">Register</span>
-          </Link>
+          <CustomButton>
+            <Link target='_blank' href="https://github.com/coutinhomarco/text-summarizer-gpt">
+              Github
+            </Link>
+          </CustomButton>
         </div>
       </div>
     </header>

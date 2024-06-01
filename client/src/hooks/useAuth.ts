@@ -8,7 +8,12 @@ const useAuth = () => {
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem('token');
-      if (!token) {
+      const loginTimestamp = localStorage.getItem('loginTimestamp');
+      const currentTime = Date.now();
+
+      if (!token || !loginTimestamp || currentTime - parseInt(loginTimestamp) > 3600000) { // 3600000 ms = 60 minutes
+        localStorage.removeItem('token');
+        localStorage.removeItem('loginTimestamp');
         router.push('/login');
       } else {
         setIsAuthenticated(true);

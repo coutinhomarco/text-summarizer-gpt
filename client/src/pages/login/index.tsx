@@ -20,6 +20,7 @@ const Login = () => {
     const data = await response.json();
     if (response.ok) {
       localStorage.setItem('token', data.token);
+      localStorage.setItem('loginTimestamp', Date.now().toString());
       router.push('/');
     } else {
       setError(data.message);
