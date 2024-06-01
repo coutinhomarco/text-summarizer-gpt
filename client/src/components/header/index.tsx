@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
+import Link from 'next/link';
 import CustomButton from '../button/CustomButton';
+import Image from 'next/image';
 
 const Header = () => {
-  const [isLogged, setIsLogged] = useState<boolean>(false);
   return (
     <header className="bg-white shadow-md dark:bg-gray-800">
       <div className="container mx-auto flex justify-between items-center p-4">
         <div className="flex items-center">
-          <img src="https://via.placeholder.com/40" alt="Logo" className="mr-2" />
-          {
-            isLogged && (
-              <CustomButton>Logout</CustomButton>
-            )
-          }
-
+          <Link href="/login">
+          <CustomButton>Login</CustomButton>
+          </Link>
         </div>
         <div className="flex items-center space-x-4">
-          <CustomButton>GitHub</CustomButton>
+          <CustomButton>Github</CustomButton>
+          <Link href="/register">
+            <span className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-300">Register</span>
+          </Link>
         </div>
       </div>
     </header>

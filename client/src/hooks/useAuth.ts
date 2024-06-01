@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import cookie from 'cookie';
 
 const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const cookies = cookie.parse(document.cookie);
-    const token = cookies.token;
+    const checkAuth = () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+      } else {
+        setIsAuthenticated(true);
+      }
+    };
 
-    if (!token) {
-      router.push('/login');
-    } else {
-      setIsAuthenticated(true);
-    }
+    checkAuth();
   }, [router]);
 
   return isAuthenticated;
