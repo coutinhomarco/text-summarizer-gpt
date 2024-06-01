@@ -27,7 +27,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/types/**/*.d.ts" // Ensure this path is included
+    "types/**/*.d.ts" // Ensure this path is included
   ],
   "exclude": [
     "node_modules"
