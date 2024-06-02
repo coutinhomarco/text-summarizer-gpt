@@ -23,7 +23,9 @@ export default async function registerHandler(req: NextApiRequest, res: NextApiR
 
       res.status(201).json({ message: 'Registration successful', user: data });
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error' });
+      console.log(error);
+      
+      res.status(500).json({ message: error });
     }
   } else {
     res.setHeader('Allow', ['POST']);

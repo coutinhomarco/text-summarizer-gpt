@@ -7,6 +7,7 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');  // State variable for success message
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -28,7 +29,10 @@ const Register = () => {
     const data = await response.json();
 
     if (response.ok) {
-      router.push('/login');
+      setSuccess('Registration successful! Redirecting to login...');
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);  // Redirect after 2 seconds
     } else {
       setError(data.message);
     }
@@ -41,6 +45,7 @@ const Register = () => {
         <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-full max-w-md ml-6">
           <h1 className="text-2xl font-bold mb-4 dark:text-white">Register</h1>
           {error && <p className="text-red-500 mb-4">{error}</p>}
+          {success && <p className="text-green-500 mb-4">{success}</p>}
           <div className="mb-4">
             <label className="block mb-2 dark:text-gray-300">Username</label>
             <input
