@@ -4,6 +4,7 @@ import useAuth from '../hooks/useAuth';
 import { useRouter } from 'next/router';
 import Notification from '../components/notification';
 import ChatSidebar from '../components/chatsidebar';
+import { useSidebar } from '../context/sidebarContext';
 
 interface Message {
   role: 'user' | 'bot';
@@ -26,6 +27,7 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [logs, setLogs] = useState<Log[]>([]);
   const [error, setError] = useState<string>('');
+  const { sidebarOpen } = useSidebar();
   const router = useRouter();
   const { notification } = router.query;
 
@@ -105,7 +107,9 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
-      <ChatSidebar logs={logs} onSelectChat={handleSelectChat} />
+      <div className={`fixed inset-y-0 left-0 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform md:relative md:translate-x-0 md:flex md:flex-col bg-gray-800 text-white w-64 p-4`}>
+        <ChatSidebar logs={logs} onSelectChat={handleSelectChat} />
+      </div>
       <div className="flex flex-col flex-grow">
         <main className="container mx-auto p-4">
           {notification && <Notification message={notification as string} />}
