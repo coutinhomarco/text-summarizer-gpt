@@ -81,40 +81,67 @@ CMD ["gunicorn", "--bind", "0.0.0.0:5000", "wsgi:app"]
 
 **docker-compose.yml**:
 ```yaml
-version: '3.8'
+version: '3.9'
 
 services:
-  flask-service:
-    build: ./services/flask-summarizer
-    ports:
-      - "5000:5000"
-    env_file:
-      - ./services/flask-summarizer/.env
-    depends_on:
-      - nest-backend
-
-  nest-backend:
-    build: ./server
+  nest_api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: nest_api
+    working_dir: /app
     ports:
       - "4000:4000"
-    env_file:
-      - .env
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydatabase
+      - FLASK_SERVICE_URL=http://flask_service:5000/summarize
     depends_on:
       - postgres
+      - flask_service
+
+  flask_service:
+    build:
+      context: ./services/flask-summarizer
+      dockerfile: Dockerfile
+    container_name: flask_service
+    working_dir: /app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydatabase
+    depends_on:
+      - postgres
+    command: ["gunicorn", "--bind", "0.0.0.0:5000", "wsgi:app"]
 
   postgres:
-    image: postgres:latest
+    image: postgres:13
+    container_name: postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: your_database
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
     ports:
       - "5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+
+  prisma_migrate:
+    image: node:18
+    container_name: prisma_migrate
+    working_dir: /app
+    volumes:
+      - ./server:/app
+    environment:
+      - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydatabase
+    depends_on:
+      - postgres
+    command: ["npx", "prisma", "migrate", "deploy"]
 
 volumes:
-  postgres-data:
+  postgres_data:
+
 
 ```
 
@@ -125,6 +152,10 @@ To run the unit tests for the Flask service, use the following command:
 docker-compose run --rm flask-service python -m unittest discover -s tests
 ```
 
+Or running tests outside docker container:
+```bash
+python -m unittest discover -s tests
+```
 ## API Endpoints
 
 ### POST /summarize
