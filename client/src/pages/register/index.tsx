@@ -41,14 +41,15 @@ const Register = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="flex items-center justify-center w-full p-6">
-        <Image fetchPriority='low' src="/assets/logos/logo.webp" alt="Logo" width={250} height={250} />
+        <Image fetchpriority="low" src="/assets/logos/logo.webp" alt="Logo" width={250} height={250} />
         <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-full max-w-md ml-6">
           <h1 className="text-2xl font-bold mb-4 dark:text-white">Register</h1>
           {error && <p className="text-red-500 mb-4">{error}</p>}
           {success && <p className="text-green-500 mb-4">{success}</p>}
           <div className="mb-4">
-            <label className="block mb-2 dark:text-gray-300">Username</label>
+            <label htmlFor="username" className="block mb-2 dark:text-gray-300">Username</label>
             <input
+              id="username"
               type="text"
               className="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               value={username}
@@ -57,8 +58,9 @@ const Register = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block mb-2 dark:text-gray-300">Password</label>
+            <label htmlFor="password" className="block mb-2 dark:text-gray-300">Password</label>
             <input
+              id="password"
               type="password"
               className="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               value={password}
@@ -67,8 +69,9 @@ const Register = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block mb-2 dark:text-gray-300">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="block mb-2 dark:text-gray-300">Confirm Password</label>
             <input
+              id="confirmPassword"
               type="password"
               className="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               value={confirmPassword}

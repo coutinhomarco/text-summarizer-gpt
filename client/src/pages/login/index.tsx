@@ -35,7 +35,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="flex items-center justify-center w-full p-6">
-        <Image fetchPriority='low' src="/assets/logos/logo.webp" alt="Logo" width={250} height={250} />
+        <Image fetchpriority="low" src="/assets/logos/logo.webp" alt="Logo" width={250} height={250} />
         <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-full max-w-md ml-6">
           <h1 className="text-2xl font-bold mb-4 dark:text-white">Login</h1>
           {error && <p className="text-red-500 mb-4">{error}</p>}

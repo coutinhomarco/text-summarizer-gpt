@@ -23,8 +23,12 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Request() req) {
-    const token = await this.authService.login(req.user);
-    return { message: 'Login successful', token };
+    try {
+      const token = await this.authService.login(req.user);
+      return { message: 'Login successful', token };
+    } catch (error) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    }
   }
 
   @Post('register')
