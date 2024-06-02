@@ -120,7 +120,7 @@ const Home: React.FC = () => {
           {notification && <Notification message={notification as string} />}
           <div className="flex justify-between items-center mb-4">
             <div className='flex items-center'>
-              <Image src="/assets/logos/logo.webp" width={100} height={100} />
+              <Image alt='logo' src="/assets/logos/logo.webp" width={100} height={100} />
               <h1 className="text-2xl font-bold">Chat</h1>
             </div>
             <button

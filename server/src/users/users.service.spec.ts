@@ -33,6 +33,7 @@ describe('UsersService', () => {
 
   it('should delete a user', async () => {
     const user = { username: 'test', password: 'password', id: 1 };
+    jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(user);
     jest.spyOn(prisma.user, 'delete').mockResolvedValue(user);
     expect(await service.delete('test')).toBe(user);
   });
