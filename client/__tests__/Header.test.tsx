@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import Header from '../src/components/header';
 import { AuthProvider } from '../src/context/authContext';
+import { SidebarProvider } from '../src/context/sidebarContext';
 import mockRouter from 'next-router-mock';
 
 describe('Header', () => {
@@ -11,7 +12,9 @@ describe('Header', () => {
   it('renders the header with title', () => {
     render(
       <AuthProvider>
-        <Header />
+        <SidebarProvider>
+          <Header />
+        </SidebarProvider>
       </AuthProvider>
     );
     const title = screen.getByText(/Text Summarizer/i);
@@ -21,7 +24,9 @@ describe('Header', () => {
   it('renders login button when not authenticated', () => {
     render(
       <AuthProvider>
-        <Header />
+        <SidebarProvider>
+          <Header />
+        </SidebarProvider>
       </AuthProvider>
     );
     const loginButton = screen.getByText(/Login/i);
