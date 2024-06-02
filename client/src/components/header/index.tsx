@@ -12,7 +12,7 @@ const Header = () => {
       <div className="container mx-auto flex justify-between items-center p-4">
         <div className="flex items-center">
           <Image src="/assets/logos/logo.webp" alt="Logo" width={40} height={40} />
-          <h1 className="text-xl font-bold dark:text-white ml-2">Text Summarizer</h1>
+          <h1 className="text-xl font-bold dark:text-white ml-2"><Link href="/">Text Summarizer</Link></h1>
         </div>
         <div className="flex items-center space-x-4">
           <CustomButton>
