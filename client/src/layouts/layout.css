@@ -1,5 +1,6 @@
 .max-h-header {
   max-height: calc(100vh - 150px);
+  overflow-y: hidden;
 }
 .bg-blue-200 {
   background-color: #bfdbfe;
