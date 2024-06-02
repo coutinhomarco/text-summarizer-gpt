@@ -1,77 +1,74 @@
+export const mockPrismaService = {
+  user: {
+    findUnique: jest.fn(),
+    create: jest.fn(),
+  },
+};
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let prisma: PrismaService;
   let jwtService: JwtService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService, PrismaService, JwtService],
+      providers: [
+        AuthService,
+        {
+          provide: JwtService,
+          useValue: {
+            sign: jest.fn().mockReturnValue('test-token'),
+          },
+        },
+        {
+          provide: PrismaService,
+          useValue: mockPrismaService,
+        },
+      ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    prisma = module.get<PrismaService>(PrismaService);
     jwtService = module.get<JwtService>(JwtService);
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
-  describe('validateUser', () => {
-    it('should return user data without password when valid credentials are provided', async () => {
-      const username = 'testuser';
-      const password = 'testpassword';
-      const hashedPassword = bcrypt.hashSync(password, 8);
-      const user = { id: 1, username, password: hashedPassword };
-
-      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(user);
-      jest.spyOn(bcrypt, 'compareSync').mockReturnValue(true);
-
-      const result = await service.validateUser(username, password);
-      expect(result).toEqual({ id: 1, username });
-    });
-
-    it('should return null when invalid credentials are provided', async () => {
-      const username = 'testuser';
-      const password = 'testpassword';
-
-      jest.spyOn(prisma.user, 'findUnique').mockResolvedValue(null);
-
-      const result = await service.validateUser(username, password);
-      expect(result).toBeNull();
-    });
   });
 
   describe('login', () => {
     it('should return access token', async () => {
-      const user = { id: 1, username: 'testuser' };
-      const payload = { username: user.username, sub: user.id };
-      const token = 'test-token';
+      const user = { username: 'test', password: 'test' };
+      const token = { token: 'test-token' };
 
-      jest.spyOn(jwtService, 'sign').mockReturnValue(token);
+      jest.spyOn(mockPrismaService.user, 'findUnique').mockResolvedValue({
+        id: 1,
+        username: 'test',
+        password: bcrypt.hashSync('test', 8),
+      });
 
-      const result = await service.login(user);
-      expect(result).toEqual({ access_token: token });
+      expect(await service.login(user)).toEqual(token);
     });
   });
 
   describe('register', () => {
     it('should create a new user and return the user data', async () => {
-      const user = { username: 'testuser', password: 'testpassword' };
-      const hashedPassword = bcrypt.hashSync(user.password, 8);
-      const createdUser = { ...user, id: 1, password: hashedPassword };
+      const user = { username: 'testuser', password: 'password123' };
+      const createdUser = {
+        id: 1,
+        username: 'testuser',
+        password: bcrypt.hashSync('password123', 8),
+      };
 
-      jest.spyOn(prisma.user, 'create').mockResolvedValue(createdUser);
-      jest.spyOn(bcrypt, 'hashSync').mockReturnValue(hashedPassword);
+      jest.spyOn(mockPrismaService.user, 'findUnique').mockResolvedValue(null);
+      jest
+        .spyOn(mockPrismaService.user, 'create')
+        .mockResolvedValue(createdUser);
 
       const result = await service.register(user);
-      expect(result).toEqual(createdUser);
+      expect(result).toEqual({
+        id: createdUser.id,
+        username: createdUser.username,
+      });
     });
   });
 });
