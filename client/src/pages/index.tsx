@@ -4,7 +4,7 @@ import useAuth from '../hooks/useAuth';
 import { useRouter } from 'next/router';
 import Notification from '../components/notification';
 import ChatSidebar from '../components/chatsidebar';
-import { useSidebar } from '../context/sidebarContext';
+import Image from 'next/image';
 
 interface Message {
   role: 'user' | 'bot';
@@ -27,7 +27,7 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [logs, setLogs] = useState<Log[]>([]);
   const [error, setError] = useState<string>('');
-  const { sidebarOpen } = useSidebar();
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const router = useRouter();
   const { notification } = router.query;
 
@@ -47,7 +47,7 @@ const Home: React.FC = () => {
 
         const data = await response.json();
         setLogs(data.logs);
-      } catch (error) {
+      } catch (error: any) {
         setError(error.message);
       }
     };
@@ -55,7 +55,7 @@ const Home: React.FC = () => {
     fetchLogs();
   }, []);
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
   };
 
@@ -95,10 +95,15 @@ const Home: React.FC = () => {
       { role: 'user', content: chat.text },
       { role: 'bot', content: chat.summary }
     ]);
+    setSidebarOpen(false);
   };
 
   const handleNewChat = () => {
     setMessages([]);
+  };
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
   };
 
   if (!isAuthenticated) {
@@ -114,7 +119,10 @@ const Home: React.FC = () => {
         <main className="container mx-auto p-4">
           {notification && <Notification message={notification as string} />}
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">Chat</h1>
+            <div className='flex items-center'>
+              <Image src="/assets/logos/logo.webp" width={100} height={100} />
+              <h1 className="text-2xl font-bold">Chat</h1>
+            </div>
             <button
               onClick={handleNewChat}
               className="bg-blue-500 text-white px-4 py-2 rounded"

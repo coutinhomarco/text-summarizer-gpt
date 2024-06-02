@@ -3,11 +3,11 @@ import { ClipLoader } from 'react-spinners';
 import CustomInput from '../input/CustomInput';
 import CustomButton from '../button/CustomButton';
 import { CustomCard, CustomCardHeader, CustomCardBody } from '../card/index';
-import {MessageList} from '../messagesList/index';
+import { MessageList } from '../messagesList/index';
 
 interface Props {
   input: string;
-  handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   sendMessage: (event: React.MouseEvent<HTMLButtonElement>) => void;
   messages: { role: 'user' | 'bot'; content: string }[];
   loading: boolean;
@@ -31,16 +31,17 @@ export default function Form(props: Props) {
         <div className="mb-4 max-h-96 overflow-y-auto">
           <MessageList messages={messages} />
         </div>
-        <CustomInput
-          type="text"
-          placeholder="Enter text to summarize..."
-          value={input}
-          onChange={handleInputChange}
-          required
-        />
-        <CustomButton onClick={sendMessage} disabled={loading}>
-          {loading ? 'Summarizing...' : 'Summarize'}
-        </CustomButton>
+        <div className="flex items-center mb-4">
+          <CustomInput
+            placeholder="Enter text to summarize..."
+            value={input}
+            onChange={handleInputChange}
+            required
+          />
+          <CustomButton onClick={sendMessage} disabled={loading}>
+            {loading ? 'Summarizing...' : 'Summarize'}
+          </CustomButton>
+        </div>
         {loading && (
           <div className="mt-4 text-center text-gray-600">
             <ClipLoader color="#4A90E2" loading={loading} size={35} />
