@@ -5,8 +5,8 @@ const NEST_API_URL = process.env.NEXT_PUBLIC_NEST_API_URL;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  const cookies = cookie.parse(req.headers.cookie || '');
-  const token = cookies.token;
+
+  const token = req.headers.authorization?.replace('Bearer ', '');
 
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized' });

@@ -56,6 +56,7 @@ export class SummarizeService {
     try {
       const logs = await this.prisma.messageLog.findMany({
         where: { userId },
+        orderBy: { createdAt: 'asc' }, // Order logs by creation time
       });
 
       return logs;

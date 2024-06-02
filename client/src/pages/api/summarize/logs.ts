@@ -5,8 +5,7 @@ const NEST_API_URL = process.env.NEXT_PUBLIC_NEST_API_URL;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const cookies = cookie.parse(req.headers.cookie || '');
-    const token = cookies.token;
+    const token = req.headers.authorization?.replace('Bearer ', '');
 
     if (!token) {
       return res.status(401).json({ message: 'Unauthorized' });
@@ -27,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const data = await response.json();
       res.status(200).json(data);
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error' });
+      res.status(500).json({ message: 'Internal server error', error: error.message });
     }
   } else {
     res.setHeader('Allow', ['GET']);
