@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 type Message = {
   role: 'user' | 'bot';
@@ -17,7 +17,10 @@ export const MessageList = ({ messages }: MessageListProps) => {
   };
 
   useEffect(() => {
-    scrollToBottom();
+    // Scroll to bottom only if the last message is from the bot
+    if (messages.length > 0 && messages[messages.length - 1].role === 'bot') {
+      scrollToBottom();
+    }
   }, [messages]);
 
   return (

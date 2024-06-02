@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import cookie from 'cookie';
 
 const NEST_API_URL = process.env.NEXT_PUBLIC_NEST_API_URL;
 

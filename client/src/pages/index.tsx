@@ -1,22 +1,58 @@
 import dynamic from 'next/dynamic';
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import useAuth from '../hooks/useAuth';
 import { useRouter } from 'next/router';
 import Notification from '../components/notification';
-const Form = dynamic(() => import('../components/chatbot/form'), { ssr: false });
+import ChatSidebar from '../components/chatsidebar';
 
 interface Message {
   role: 'user' | 'bot';
   content: string;
 }
 
-const Home = () => {
+interface Log {
+  id: number;
+  text: string;
+  summary: string;
+  createdAt: string;
+}
+
+const Form = dynamic(() => import('../components/chatbot/form'), { ssr: false });
+
+const Home: React.FC = () => {
   const isAuthenticated = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [logs, setLogs] = useState<Log[]>([]);
+  const [error, setError] = useState<string>('');
   const router = useRouter();
   const { notification } = router.query;
+
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        const response = await fetch('/api/summarize/logs', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch logs');
+        }
+
+        const data = await response.json();
+        setLogs(data.logs);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchLogs();
+  }, []);
+
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
   };
@@ -42,7 +78,7 @@ const Home = () => {
         body: JSON.stringify({ message: input })
       });
 
-      const data = await response.json();      
+      const data = await response.json();
       const botMessage: Message = { role: 'bot', content: data.summary };
       setMessages(prevMessages => [...prevMessages, botMessage]);
     } catch (error) {
@@ -52,22 +88,45 @@ const Home = () => {
     }
   };
 
+  const handleSelectChat = (chat: Log) => {
+    setMessages([
+      { role: 'user', content: chat.text },
+      { role: 'bot', content: chat.summary }
+    ]);
+  };
+
+  const handleNewChat = () => {
+    setMessages([]);
+  };
+
   if (!isAuthenticated) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 max-h-header">
-      <main className="container mx-auto p-4">
-        {notification && <Notification message={notification as string} />}
-        <Form
-          messages={messages}
-          input={input}
-          handleInputChange={handleInputChange}
-          sendMessage={sendMessage}
-          loading={loading}
-        />
-      </main>
+    <div className="flex bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+      <ChatSidebar logs={logs} onSelectChat={handleSelectChat} />
+      <div className="flex flex-col flex-grow">
+        <main className="container mx-auto p-4">
+          {notification && <Notification message={notification as string} />}
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold">Chat</h1>
+            <button
+              onClick={handleNewChat}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              New Chat
+            </button>
+          </div>
+          <Form
+            messages={messages}
+            input={input}
+            handleInputChange={handleInputChange}
+            sendMessage={sendMessage}
+            loading={loading}
+          />
+        </main>
+      </div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import '../styles/globals.css';
 import '../layouts/layout.css';
+import '../components/chatsidebar/chatsidebar.css';
 import type { AppProps } from 'next/app';
 import { AuthProvider } from '../context/authContext';
 import Layout from '../layouts/layout';
