@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 const Notification: React.FC<{ message: string }> = ({ message }) => {
@@ -7,6 +7,11 @@ const Notification: React.FC<{ message: string }> = ({ message }) => {
   const handleClose = () => {
     router.replace(router.pathname); // Remove the query parameter
   };
+
+  useEffect(() => {
+    const timer = setTimeout(handleClose, 3000); // Auto-dismiss after 3 seconds
+    return () => clearTimeout(timer); // Clear the timer if the component unmounts
+  }, []);
 
   return (
     <div className="fixed top-0 right-0 mt-4 mr-4 p-4 bg-green-500 text-white rounded shadow-lg z-50">
