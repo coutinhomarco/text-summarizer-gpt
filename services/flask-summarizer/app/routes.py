@@ -22,11 +22,12 @@ def summarize():
             ],
             max_tokens=350
         )
-        summary = response.choices[0].message.content.strip()
+        summary = response['choices'][0]['message']['content'].strip()
         return jsonify({'summary': summary})
     except Exception as e:
         print(f"Exception: {e}")  # Add print statement to log the exception
         return jsonify({'error': str(e)}), 500
+
 @bp.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok'})
