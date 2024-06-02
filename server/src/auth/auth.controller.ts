@@ -1,7 +1,19 @@
 import { LocalAuthGuard } from './local-auth/local-auth.guard';
-import { CreateUserDto } from '../users/dto/create-user.dto/create-user.dto';
-import { Controller, Request, Post, UseGuards, Body } from '@nestjs/common';
+import {
+  Controller,
+  Request,
+  Post,
+  UseGuards,
+  Body,
+  HttpCode,
+  HttpStatus,
+  HttpException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
+export class CreateUserDto {
+  username: string;
+  password: string;
+}
 
 @Controller('auth')
 export class AuthController {
@@ -9,12 +21,20 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   async login(@Request() req) {
-    return this.authService.login(req.user);
+    const token = await this.authService.login(req.user);
+    return { message: 'Login successful', token };
   }
 
   @Post('register')
+  @HttpCode(HttpStatus.CREATED)
   async register(@Body() createUserDto: CreateUserDto) {
-    return this.authService.register(createUserDto);
+    try {
+      const newUser = await this.authService.register(createUserDto);
+      return { message: 'User registered successfully', user: newUser };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 }

@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 const NEST_API_URL = process.env.NEXT_PUBLIC_NEST_API_URL;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function registerHandler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { username, password } = req.body;
 
@@ -15,12 +15,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         body: JSON.stringify({ username, password }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        return res.status(response.status).json({ message: 'Registration failed' });
+        return res.status(response.status).json({ message: data.message || 'Registration failed' });
       }
 
-      const data = await response.json();
-      res.status(200).json(data);
+      res.status(201).json({ message: 'Registration successful', user: data });
     } catch (error) {
       res.status(500).json({ message: 'Internal server error' });
     }

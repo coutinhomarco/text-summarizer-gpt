@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -27,10 +27,19 @@ export class AuthService {
   }
 
   async register(user: any) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { username: user.username },
+    });
+    if (existingUser) {
+      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+    }
+
     const hashedPassword = bcrypt.hashSync(user.password, 8);
     const newUser = await this.prisma.user.create({
       data: { ...user, password: hashedPassword },
     });
-    return newUser;
+
+    const { password, ...result } = newUser;
+    return result;
   }
 }

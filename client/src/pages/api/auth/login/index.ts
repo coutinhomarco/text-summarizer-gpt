@@ -2,10 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 const NEST_API_URL = process.env.NEXT_PUBLIC_NEST_API_URL;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function loginHandler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { username, password } = req.body;
-    console.log('received req');
     
     try {
       const response = await fetch(`${NEST_API_URL}/auth/login`, {
@@ -16,11 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         body: JSON.stringify({ username, password }),
       });
 
-      if (!response.ok) {
-        return res.status(response.status).json({ message: 'Authentication failed' });
-      }
-
       const data = await response.json();
+
+      if (!response.ok) {
+        return res.status(response.status).json({ message: data.message || 'Authentication failed' });
+      }
 
       res.status(200).json({ message: 'Authentication successful', token: data.token });
     } catch (error) {
