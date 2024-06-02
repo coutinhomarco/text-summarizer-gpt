@@ -1,7 +1,7 @@
 import unittest
 from flask_testing import TestCase
 from app import create_app
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 class SummarizeTestCase(TestCase):
     def create_app(self):
@@ -13,9 +13,16 @@ class SummarizeTestCase(TestCase):
     @patch('app.routes.client.chat.completions.create')
     def test_summarize(self, mock_create):
         # Mock the OpenAI API response
-        mock_create.return_value = {
-            'choices': [{'message': {'content': 'Summary: Bruno is great.'}}]
-        }
+        mock_message = MagicMock()
+        mock_message.content = 'Summary: Bruno is great.'
+
+        mock_choice = MagicMock()
+        mock_choice.message = mock_message
+
+        mock_response = MagicMock()
+        mock_response.choices = [mock_choice]
+
+        mock_create.return_value = mock_response
 
         response = self.client.post('/summarize', json={'text': 'Bruno is a great request manager.'})
         print(response.json)  # Add print statement to see the response content

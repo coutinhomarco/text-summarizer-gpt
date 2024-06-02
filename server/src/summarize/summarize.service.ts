@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
@@ -17,33 +17,56 @@ export class SummarizeService {
   }
 
   async summarize(userId: number, text: string): Promise<any> {
-    const response = await lastValueFrom(
-      this.httpService.post(
-        this.flaskServiceUrl,
-        { text },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.configService.get<string>('FLASK_SERVICE_TOKEN')}`,
+    try {
+      const response = await lastValueFrom(
+        this.httpService.post(
+          this.flaskServiceUrl,
+          { text },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.configService.get<string>('FLASK_SERVICE_TOKEN')}`,
+            },
           },
-        },
-      ),
-    );
-    const summary = response.data.summary;
-    await this.prisma.messageLog.create({
-      data: {
-        userId,
-        text,
-        summary,
-      },
-    });
+        ),
+      );
+      const summary = response.data.summary;
 
-    return { summary };
+      await this.prisma.messageLog.create({
+        data: {
+          userId,
+          text,
+          summary,
+        },
+      });
+
+      return summary;
+    } catch (error) {
+      throw new HttpException(
+        {
+          message: 'Summarization failed',
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async getLogs(userId: number): Promise<any> {
-    return this.prisma.messageLog.findMany({
-      where: { userId },
-    });
+    try {
+      const logs = await this.prisma.messageLog.findMany({
+        where: { userId },
+      });
+
+      return logs;
+    } catch (error) {
+      throw new HttpException(
+        {
+          message: 'Failed to retrieve logs',
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

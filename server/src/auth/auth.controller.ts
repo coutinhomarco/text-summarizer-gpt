@@ -25,7 +25,7 @@ export class AuthController {
   async login(@Request() req) {
     try {
       const token = await this.authService.login(req.user);
-      return { message: 'Login successful', token };
+      return { message: 'Login successful', token: token.token };
     } catch (error) {
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }

@@ -38,13 +38,14 @@ describe('AuthController', () => {
   describe('login', () => {
     it('should return access token', async () => {
       const token = { token: 'test-token' };
-      const returnData = { message: 'Login successful', token };
+      const returnData = { message: 'Login successful', token: token.token };
 
       jest.spyOn(authService, 'login').mockResolvedValue(token);
 
-      expect(
-        await authController.login({ username: 'test', password: 'test' }),
-      ).toEqual(returnData);
+      const result = await authController.login({
+        user: { username: 'test', password: 'test' },
+      });
+      expect(result).toEqual(returnData);
     });
   });
 });

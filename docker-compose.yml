@@ -32,19 +32,6 @@ services:
       - flask_service
     command: ["npm", "run", "test"]
 
-  nest_api_seed:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    container_name: nest_api_seed
-    working_dir: /app
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydatabase
-    depends_on:
-      - postgres
-    command: ["npm", "run", "seed"]
-
   flask_service:
     build:
       context: ./services/flask-summarizer
