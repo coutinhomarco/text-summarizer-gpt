@@ -1,7 +1,7 @@
 import '../styles/globals.css';
 import '../layouts/layout.css';
 import type { AppProps } from 'next/app';
-import { AuthProvider } from '@/context/authContext';
+import { AuthProvider } from '../context/authContext';
 import Layout from '../layouts/layout';
 import { useEffect } from 'react';
 

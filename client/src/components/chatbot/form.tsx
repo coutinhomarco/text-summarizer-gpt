@@ -23,8 +23,8 @@ export default function Form(props: Props) {
           <h1 className="text-2xl font-bold dark:text-white">Welcome to the Next.js Text Summarizer!</h1>
         </CustomCardHeader>
         <CustomCardBody>
-          <p className="mb-2">This is an open source text summarizer app template built with Next.js and OpenAI&apos;s GPT-4.</p>
-          <p className="mb-2">It uses React components to provide a seamless experience for summarizing text using GPT-4.</p>
+          <p className="mb-2">This is an open source text summarizer app template built with Next.js and OpenAI&apos;s GPT-3.5 Turbo.</p>
+          <p className="mb-2">It uses React components to provide a seamless experience for summarizing text using GPT-3.5 Turbo.</p>
         </CustomCardBody>
       </CustomCard>
       <CustomCard>

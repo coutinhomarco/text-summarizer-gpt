@@ -5,7 +5,8 @@ const NEST_API_URL = process.env.NEXT_PUBLIC_NEST_API_URL;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const { username, password } = req.body;
-
+    console.log('received req');
+    
     try {
       const response = await fetch(`${NEST_API_URL}/auth/login`, {
         method: 'POST',
