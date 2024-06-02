@@ -187,9 +187,21 @@ flask-summarizer/
 
 To run the unit tests for the Flask service, use the following command:
 ```bash
-docker-compose run --rm flask_service python -m unittest discover -s tests
+docker-compose run --rm flask-service python -m unittest discover -s tests
+```
+And for Nest:
+```bash
+docker-compose run --rm nest_api_test
 ```
 
+Or running tests outside docker container for Flask:
+```bash
+python -m unittest discover -s tests
+```
+For Next or Nest
+```bash
+npm run test
+```
 ## Front End
 
 ### Overview

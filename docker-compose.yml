@@ -17,6 +17,21 @@ services:
       - postgres
       - flask_service
 
+  nest_api_test:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: nest_api_test
+    working_dir: /app
+    environment:
+      - NODE_ENV=test
+      - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydatabase
+      - FLASK_SERVICE_URL=http://flask_service:5000/summarize
+    depends_on:
+      - postgres
+      - flask_service
+    command: ["npm", "run", "test"]
+
   flask_service:
     build:
       context: ./services/flask-summarizer
