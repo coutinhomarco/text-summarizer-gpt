@@ -1,14 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../prisma/prisma.service';
-export const mockPrismaService = {
-  user: {
-    findUnique: jest.fn(),
-    create: jest.fn(),
-  },
-};
+
 describe('AuthController', () => {
   let authController: AuthController;
   let authService: AuthService;
@@ -17,16 +10,12 @@ describe('AuthController', () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
-        AuthService,
         {
-          provide: JwtService,
+          provide: AuthService,
           useValue: {
-            sign: jest.fn().mockReturnValue('test-token'),
+            login: jest.fn(),
+            register: jest.fn(),
           },
-        },
-        {
-          provide: PrismaService,
-          useValue: mockPrismaService,
         },
       ],
     }).compile();

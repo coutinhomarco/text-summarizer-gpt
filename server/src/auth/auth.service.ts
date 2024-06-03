@@ -1,17 +1,17 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { AuthRepository } from './auth.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
+    private authRepository: AuthRepository,
     private jwtService: JwtService,
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.prisma.user.findUnique({ where: { username } });
+    const user = await this.authRepository.findUserByUsername(username);
     if (user && bcrypt.compareSync(pass, user.password)) {
       const { password, ...result } = user;
       return result;
@@ -27,16 +27,17 @@ export class AuthService {
   }
 
   async register(user: any) {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { username: user.username },
-    });
+    const existingUser = await this.authRepository.findUserByUsername(
+      user.username,
+    );
     if (existingUser) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
 
     const hashedPassword = bcrypt.hashSync(user.password, 8);
-    const newUser = await this.prisma.user.create({
-      data: { ...user, password: hashedPassword },
+    const newUser = await this.authRepository.createUser({
+      ...user,
+      password: hashedPassword,
     });
 
     const { password, ...result } = newUser;

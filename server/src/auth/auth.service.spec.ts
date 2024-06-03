@@ -1,14 +1,13 @@
-export const mockPrismaService = {
-  user: {
-    findUnique: jest.fn(),
-    create: jest.fn(),
-  },
-};
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../prisma/prisma.service';
+import { AuthRepository } from './auth.repository';
 import * as bcrypt from 'bcrypt';
+
+const mockAuthRepository = {
+  findUserByUsername: jest.fn(),
+  createUser: jest.fn(),
+};
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -25,8 +24,8 @@ describe('AuthService', () => {
           },
         },
         {
-          provide: PrismaService,
-          useValue: mockPrismaService,
+          provide: AuthRepository,
+          useValue: mockAuthRepository,
         },
       ],
     }).compile();
@@ -40,7 +39,7 @@ describe('AuthService', () => {
       const user = { username: 'test', password: 'test' };
       const token = { token: 'test-token' };
 
-      jest.spyOn(mockPrismaService.user, 'findUnique').mockResolvedValue({
+      jest.spyOn(mockAuthRepository, 'findUserByUsername').mockResolvedValue({
         id: 1,
         username: 'test',
         password: bcrypt.hashSync('test', 8),
@@ -59,9 +58,11 @@ describe('AuthService', () => {
         password: bcrypt.hashSync('password123', 8),
       };
 
-      jest.spyOn(mockPrismaService.user, 'findUnique').mockResolvedValue(null);
       jest
-        .spyOn(mockPrismaService.user, 'create')
+        .spyOn(mockAuthRepository, 'findUserByUsername')
+        .mockResolvedValue(null);
+      jest
+        .spyOn(mockAuthRepository, 'createUser')
         .mockResolvedValue(createdUser);
 
       const result = await service.register(user);
