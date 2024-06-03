@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SummarizeController } from './summarize.controller';
 import { SummarizeService } from './summarize.service';
-import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
 
 describe('SummarizeController', () => {
   let controller: SummarizeController;
@@ -23,6 +22,10 @@ describe('SummarizeController', () => {
 
     controller = module.get<SummarizeController>(SummarizeController);
     service = module.get<SummarizeService>(SummarizeService);
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 
   it('should summarize text', async () => {

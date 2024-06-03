@@ -2,12 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SummarizeService } from './summarize.service';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../prisma/prisma.service';
+import { SummarizeRepository } from './summarize.repository';
 import { of } from 'rxjs';
 
 describe('SummarizeService', () => {
   let service: SummarizeService;
-  let prisma: PrismaService;
+  let repository: SummarizeRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -28,18 +28,21 @@ describe('SummarizeService', () => {
           },
         },
         {
-          provide: PrismaService,
+          provide: SummarizeRepository,
           useValue: {
-            messageLog: {
-              create: jest.fn(),
-            },
+            createMessageLog: jest.fn(),
+            findLogsByUser: jest.fn(),
           },
         },
       ],
     }).compile();
 
     service = module.get<SummarizeService>(SummarizeService);
-    prisma = module.get<PrismaService>(PrismaService);
+    repository = module.get<SummarizeRepository>(SummarizeRepository);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
 
   it('should summarize text', async () => {
@@ -47,7 +50,7 @@ describe('SummarizeService', () => {
     const text = 'test';
     const summary = 'summary';
 
-    jest.spyOn(prisma.messageLog, 'create').mockResolvedValue({
+    jest.spyOn(repository, 'createMessageLog').mockResolvedValue({
       id: 1,
       userId,
       text,
@@ -56,9 +59,11 @@ describe('SummarizeService', () => {
     });
 
     const result = await service.summarize(userId, text);
-    expect(result).toEqual(summary); // The service returns the summary string
-    expect(prisma.messageLog.create).toHaveBeenCalledWith({
-      data: { userId, text, summary },
-    });
+    expect(result).toEqual(summary);
+    expect(repository.createMessageLog).toHaveBeenCalledWith(
+      userId,
+      text,
+      summary,
+    );
   });
 });

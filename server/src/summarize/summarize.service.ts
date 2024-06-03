@@ -1,8 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../prisma/prisma.service';
 import { lastValueFrom } from 'rxjs';
+import { SummarizeRepository } from './summarize.repository';
 
 @Injectable()
 export class SummarizeService {
@@ -11,7 +11,7 @@ export class SummarizeService {
   constructor(
     private httpService: HttpService,
     private configService: ConfigService,
-    private prisma: PrismaService,
+    private summarizeRepository: SummarizeRepository,
   ) {
     this.flaskServiceUrl = this.configService.get<string>('FLASK_SERVICE_URL');
   }
@@ -32,13 +32,7 @@ export class SummarizeService {
       );
       const summary = response.data.summary;
 
-      await this.prisma.messageLog.create({
-        data: {
-          userId,
-          text,
-          summary,
-        },
-      });
+      await this.summarizeRepository.createMessageLog(userId, text, summary);
 
       return summary;
     } catch (error) {
@@ -54,12 +48,7 @@ export class SummarizeService {
 
   async getLogs(userId: number): Promise<any> {
     try {
-      const logs = await this.prisma.messageLog.findMany({
-        where: { userId },
-        orderBy: { createdAt: 'asc' }, // Order logs by creation time
-      });
-
-      return logs;
+      return await this.summarizeRepository.findLogsByUser(userId);
     } catch (error) {
       throw new HttpException(
         {
