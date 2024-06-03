@@ -1,8 +1,19 @@
 from flask import Blueprint, request, jsonify
-from openai import OpenAI
+import openai
 import os
+import logging
 
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+# Initialize logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Initialize OpenAI client
+api_key = os.getenv('OPENAI_API_KEY')
+if not api_key:
+    logger.error('OPENAI_API_KEY environment variable is not set')
+    raise ValueError('OPENAI_API_KEY environment variable is required')
+
+openai.api_key = api_key
 
 bp = Blueprint('routes', __name__)
 
@@ -10,11 +21,12 @@ bp = Blueprint('routes', __name__)
 def summarize():
     data = request.get_json()
     text = data.get('text')
+    
     if not text:
         return jsonify({'error': 'No text provided'}), 400
+    
     try:
-        # Use the OpenAI API for text summarization
-        response = client.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
@@ -22,11 +34,16 @@ def summarize():
             ],
             max_tokens=350
         )
-        summary = response.choices[0].message.content.strip()
+        summary = response['choices'][0]['message']['content'].strip()
         return jsonify({'summary': summary})
+    
+    except openai.error.InvalidRequestError as e:
+        logger.error(f"OpenAI API error: {e}")
+        return jsonify({'error': 'Failed to process the request'}), 500
+    
     except Exception as e:
-        print(f"Exception: {e}")  # Add print statement to log the exception
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"Unexpected error: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
 
 @bp.route('/health', methods=['GET'])
 def health():
