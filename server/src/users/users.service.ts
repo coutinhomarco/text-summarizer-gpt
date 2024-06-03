@@ -1,12 +1,12 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async findOne(username: string): Promise<any | undefined> {
-    const user = await this.prisma.user.findUnique({ where: { username } });
+    const user = await this.userRepository.findOne(username);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
@@ -14,27 +14,23 @@ export class UsersService {
   }
 
   async create(user: any) {
-    const existingUser = await this.prisma.user.findUnique({
-      where: { username: user.username },
-    });
+    const existingUser = await this.userRepository.findOne(user.username);
     if (existingUser) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
-    return this.prisma.user.create({
-      data: user,
-    });
+    return this.userRepository.create(user);
   }
 
   async delete(username: string) {
-    const user = await this.prisma.user.findUnique({ where: { username } });
+    const user = await this.userRepository.findOne(username);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    await this.prisma.user.delete({ where: { username } });
+    await this.userRepository.delete(username);
     return user;
   }
 
   async findAll() {
-    return this.prisma.user.findMany();
+    return this.userRepository.findAll();
   }
 }
