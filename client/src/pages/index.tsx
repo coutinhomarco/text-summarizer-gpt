@@ -102,10 +102,6 @@ const Home: React.FC = () => {
     setMessages([]);
   };
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
   if (!isAuthenticated) {
     return <div>Loading...</div>;
   }

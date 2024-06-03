@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
@@ -25,13 +25,12 @@ export class SummarizeService {
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${this.configService.get<string>('FLASK_SERVICE_TOKEN')}`,
             },
           },
         ),
       );
-      const summary = response.data.summary;
 
+      const summary = response.data.summary;
       await this.summarizeRepository.createMessageLog(userId, text, summary);
 
       return summary;
