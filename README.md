@@ -4,18 +4,19 @@ This project consists of a NestJS API that interacts with a Flask microservice f
 
 ## Table of Contents
 
-1. [Prerequisites](#prerequisites)
-2. [Installation](#installation)
-3. [Configuration](#configuration)
-4. [Running the Application](#running-the-application)
-5. [API Endpoints](#api-endpoints)
-6. [Database Schema](#database-schema)
-7. [Flask Summarization Service](#flask-summarization-service)
-8. [Front End](#front-end)
-9. [Running Tests](#running-tests)
-10. [Development](#development)
+1. [Request Flow](#request-flow)
+2. [Prerequisites](#prerequisites)
+3. [Installation](#installation)
+4. [Configuration](#configuration)
+5. [Running the Application](#running-the-application)
+6. [API Endpoints](#api-endpoints)
+7. [Database Schema](#database-schema)
+8. [Flask Summarization Service](#flask-summarization-service)
+9. [Front End](#front-end)
+10. [Running Tests](#running-tests)
+11. [Development](#development)
 
-## Request flow
+## Request Flow
 
 ![Request Flow](docs/workflow.png)
 
@@ -29,29 +30,29 @@ This project consists of a NestJS API that interacts with a Flask microservice f
 
 ## Installation
 
-1. **Clone the repository:**
+### Clone the repository:
 
-   ```bash
-   git clone git@github.com:coutinhomarco/text-summarizer-gpt.git
-   cd text-summarizer-gpt
-   ```
+```bash
+git clone git@github.com:coutinhomarco/text-summarizer-gpt.git
+cd text-summarizer-gpt
+```
 
-2. **Install dependencies (only needed if not using Docker):**
+### Install dependencies (only needed if not using Docker):
 
-   ```bash
-   cd server
-   npm install
-   ```
+```bash
+cd server
+npm install
+```
 
-3. **Set up environment variables:**
+### Set up environment variables:
 
-   Create a `.env` file in the root directory and fill in the necessary environment variables. You can use the provided `.env.example` as a reference.
+Create a `.env` file in the root directory and fill in the necessary environment variables. You can use the provided `.env.example` as a reference.
 
-4. **Generate Prisma Client (only needed if not using Docker):**
+### Generate Prisma Client (only needed if not using Docker):
 
-   ```bash
-   npx prisma generate
-   ```
+```bash
+npx prisma generate
+```
 
 ## Configuration
 
@@ -72,19 +73,100 @@ JWT_SECRET=your_jwt_secret
 
 ## Running the Application
 
+### Using Docker Compose:
+
 1. **Start the Docker containers:**
 
    ```bash
    docker-compose up --build
    ```
 
-2. **Apply Prisma Migrations:**
+The NestJS API will be running on `http://localhost:4000` and the Flask service will be running on `http://localhost:5000`.
+
+### Without Docker:
+
+#### Backend (NestJS):
+
+1. **Navigate to the NestJS server directory:**
 
    ```bash
-   npx prisma migrate deploy
+   cd server
    ```
 
-The NestJS API will be running on `http://localhost:4000` and the Flask service will be running on `http://localhost:5000`.
+2. **Install Dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up Environment Variables:**
+
+   Ensure that the `.env` file is correctly configured as mentioned in the Configuration section.
+
+4. **Run NestJS Application:**
+
+   ```bash
+   npm run start:dev
+   ```
+
+#### PostgreSQL:
+
+1. **Ensure PostgreSQL is running:**
+   You can either run PostgreSQL locally or through Docker.
+
+2. **Run Prisma Migrations:**
+
+   ```bash
+   npx prisma migrate dev
+   ```
+
+#### Flask:
+
+1. **Create and Activate a Virtual Environment:**
+
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+2. **Install Dependencies:**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Run the Flask Application:**
+
+   ```bash
+   export FLASK_APP=wsgi.py
+   flask run
+   ```
+
+#### Front-End (Next.js):
+
+1. **Navigate to the front-end directory:**
+
+   ```bash
+   cd client
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables:**
+
+   Ensure that the `.env.local` file is correctly configured as mentioned in the Configuration section.
+
+4. **Run the Next.js Application:**
+
+   ```bash
+   npm run dev
+   ```
+
+The front-end application will be running on `http://localhost:3000`.
 
 ## API Endpoints
 
@@ -185,23 +267,28 @@ flask-summarizer/
 
 ## Running Tests
 
+### Inside Docker Container:
+
 To run the unit tests for the Flask service, use the following command:
 ```bash
 docker-compose run --rm flask-service python -m unittest discover -s tests
 ```
-And for Nest:
+To run tests for NestJS:
 ```bash
 docker-compose run --rm nest_api_test
 ```
 
-Or running tests outside docker container for Flask:
+### Outside Docker Container:
+
+For Flask:
 ```bash
 python -m unittest discover -s tests
 ```
-For Next or Nest
+For Next.js or NestJS:
 ```bash
 npm run test
 ```
+
 ## Front End
 
 ### Overview
@@ -264,7 +351,9 @@ client/
 
 3. **Set up environment variables:**
 
-   Create a `.env.local` file in the `client` directory and fill in the necessary environment variables. You can use the provided `.env.example` as a reference.
+   Create a `.env
+
+.local` file in the `client` directory and fill in the necessary environment variables. You can use the provided `.env.example` as a reference.
 
 ### Configuration
 
@@ -360,3 +449,9 @@ The front-end application will be running on `http://localhost:3000`.
    ```bash
    npm run dev
    ```
+
+The front-end application will be running on `http://localhost:3000`.
+
+### Final Notes
+
+By following these instructions, you should be able to set up, run, and develop the Text Summarizer Project both locally and using Docker. Make sure to configure all environment variables correctly to ensure smooth operation of the services. If you encounter any issues or have any questions, please refer to the documentation or open an issue on the project's GitHub repository.
