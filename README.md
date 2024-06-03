@@ -46,7 +46,7 @@ npm install
 
 ### Set up environment variables:
 
-Create a `.env` file in the root directory and fill in the necessary environment variables. You can use the provided `.env.example` as a reference.
+Create a `.env` file in the root directory and fill in the necessary environment variables. You can use the provided `.env.dev` as a reference.
 
 ### Generate Prisma Client (only needed if not using Docker):
 
@@ -353,7 +353,7 @@ client/
 
    Create a `.env
 
-.local` file in the `client` directory and fill in the necessary environment variables. You can use the provided `.env.example` as a reference.
+.local` file in the `client` directory and fill in the necessary environment variables. You can use the provided `.env.dev` as a reference.
 
 ### Configuration
 
